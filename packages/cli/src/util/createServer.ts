@@ -81,7 +81,7 @@ async function createPrismServerWithLogger(options: CreateBaseServerOptions, log
     throw new Error('No operations found in the current file.');
   }
 
-  const validateRequest = isProxyServerOptions(options) ? options.validateRequest : true;
+  const validateRequest = true;
   const shared = {
     validateRequest,
     validateResponse: true,
@@ -91,14 +91,7 @@ async function createPrismServerWithLogger(options: CreateBaseServerOptions, log
     mock: { dynamic: options.dynamic, ignoreExamples: options.ignoreExamples, seed: options.seed },
   };
 
-  const config: IHttpConfig = isProxyServerOptions(options)
-    ? {
-        ...shared,
-        isProxy: true,
-        upstream: options.upstream,
-        upstreamProxy: options.upstreamProxy,
-      }
-    : { ...shared, isProxy: false };
+  const config: IHttpConfig = { ...shared, isProxy: false };
 
   const server = createHttpServer(operations, {
     cors: options.cors,
@@ -149,9 +142,6 @@ function pipeOutputToSignale(stream: Readable) {
     });
 }
 
-function isProxyServerOptions(options: CreateBaseServerOptions): options is CreateProxyServerOptions {
-  return 'upstream' in options;
-}
 
 /**
  * @property {boolean} jsonSchemaFakerFillProperties - Used to override the default json-schema-faker extension value
@@ -169,12 +159,6 @@ type CreateBaseServerOptions = {
   seed: string;
   jsonSchemaFakerFillProperties: boolean;
 };
-
-export interface CreateProxyServerOptions extends CreateBaseServerOptions {
-  upstream: URL;
-  validateRequest: boolean;
-  upstreamProxy: string | undefined;
-}
 
 export type CreateMockServerOptions = CreateBaseServerOptions;
 
