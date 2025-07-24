@@ -8,7 +8,7 @@ import * as Option from 'fp-ts/lib/Option';
 import * as chalk from 'chalk';
 
 import { IHttpRequest, IHttpResponse } from '../types';
-import { serializeBody } from '../forwarder';
+import { serializeBody } from './serializeBody';
 
 export const violationLogger = withLogger(logger => {
   return (violation: IPrismDiagnostic) => {

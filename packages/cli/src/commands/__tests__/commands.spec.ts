@@ -2,9 +2,8 @@ import * as operationUtils from '@stoplight/prism-http';
 import * as yargs from 'yargs';
 import { createMultiProcessPrism, createSingleProcessPrism } from '../../util/createServer';
 import mockCommand from '../mock';
-import proxyCommand from '../proxy';
 
-const parser = yargs.command(mockCommand).command(proxyCommand);
+const parser = yargs.command(mockCommand);
 
 jest.mock('../../util/createServer', () => ({
   createMultiProcessPrism: jest.fn().mockResolvedValue([]),
@@ -15,7 +14,6 @@ jest.spyOn(operationUtils, 'getHttpOperationsFromSpec').mockResolvedValue([]);
 
 describe.each<{ 0: string; 1: string; 2: unknown }>([
   ['mock', '', { dynamic: false }],
-  ['proxy', 'http://github.com', { upstream: new URL('http://github.com/') }],
 ])('%s command', (command, upstream) => {
   beforeEach(() => {
     (createSingleProcessPrism as jest.Mock).mockClear();
@@ -78,12 +76,4 @@ describe.each<{ 0: string; 1: string; 2: unknown }>([
 
     expect(createMultiProcessPrism).toHaveBeenLastCalledWith(expect.objectContaining({ errors: true }));
   });
-});
-
-test(`starts proxy server with default validate-request option to be overriden`, () => {
-  parser.parse(`proxy /path/to -m -h 0.0.0.0 ${new URL('http://github.com/')} --validate-request=false`);
-
-  expect(createMultiProcessPrism).toHaveBeenLastCalledWith(
-    expect.objectContaining({ validateRequest: false, host: '0.0.0.0' })
-  );
 });

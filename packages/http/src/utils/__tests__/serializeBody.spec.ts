@@ -1,5 +1,5 @@
 import { assertLeft, assertRight } from '@stoplight/prism-core/src/__tests__/utils';
-import { serializeBody } from '../../forwarder';
+import { serializeBody } from '../serializeBody';
 
 describe('serializeBody()', () => {
   describe('when body is a string', () => {
